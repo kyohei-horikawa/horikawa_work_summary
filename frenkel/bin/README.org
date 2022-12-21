@@ -1,0 +1,107 @@
+#+qiita_private: 0598eb74643e081996e9
+#+OPTIONS: ^:{}
+#+STARTUP: indent nolineimages
+#+TITLE: Frenkel法メモ
+#+AUTHOR: Shigeto R. Nishitani
+#+EMAIL:     (concat "shigeto_nishitani@mac.com")
+#+LANGUAGE:  jp
+# +OPTIONS:   H:4 toc:t num:2
+#+OPTIONS:   toc:nil
+#+TAG: VASP, Frenkel
+#+TWITTER: off
+# +SETUPFILE: ~/.emacs.d/org-mode/theme-readtheorg.setup
+
+![macOS-11.2.3](https://img.shields.io/badge/macOS-11.2.3-brightgreen) ![ruby-2.7.2p137](https://img.shields.io/badge/ruby-2.7.2p137-brightgreen) 
+
+
+* prepare
+  : rake perfect|vac
+  : cd 800k
+  : mv hoge to p_075
+  : emacs run_vasp_new_asura.sh  # check name and lambda
+  : emacs INCAR # check suitable parameters for asura
+  : qsub run_vasp_new_asura.sh
+
+#+begin_example
+> mkdir perfect
+> cd perfect/
+> cp -r ../bin/vasp_templates_perfect/* .
+> emacs POSCAR_p_32             # adjust volume
+> cp POSCAR_p_32 POSCAR_init
+> cp POSCAR_p_32 POSCAR_init_0
+> emacs fcc_ks.dat              # copy from maple script
+> emacs vasp_run_new_asura.sh   # adjust calc conditions 500K
+> qsub vasp_run_new_asura.sh
+> # adjust dx for half acceptance
+#+end_example
+
+* Rakefile for Frenkel Calculations
+#+begin_src ruby
+require 'colorize'
+
+task :default do
+  system 'rake -T'
+end
+
+def prepare_dir(template)
+  target = ARGV[1] || '800k/hoge'
+  system "mkdir #{target}"
+  system "cp -r ../bin/#{template}/* #{target}"
+  system "check #{target}/vasp_run_new_asura.sh"
+  puts 'check 800k/hoge'
+  puts 'mv 800k/hoge to suitable name'.red
+end
+desc 'prepare perfec'
+task :perfect do
+  puts 'prepare perfect'
+  prepare_dir('vasp_templates_perfect')
+  exit
+end
+
+desc 'prepare vac'
+task :vac do
+  puts 'prepare vac'
+  prepare_dir('vasp_templates_vac')
+  exit
+end
+#+end_src
+
+* 手順
+1. mkdir perfect #計算directoryを作成
+1. cd bin
+1. cp vasp_run_new_asura.sh ../perfect
+1. cd templates/p_templates
+1. cp fcc_ks.dat KPOINTS POTCAR INCAR ../../perfect
+1. cd ../../perfect
+1. edit fcc_ks.dat # e0, ks, ks, ks 最後の改行に注意，returnだけの行は不可
+1. edit INCAR
+1. edit vasp_run_new_asura.sh
+1. cp some_dir/POSCAR .
+  1. edit POSCAR whole scale paramter to an adequate volume
+  1. cp POSCAR POSCAR_init .
+  1. cp POSCAR POSCAR_init_0 .
+1. qsub vasp_run_new_asura.sh
+
+#+begin_example
+> ls -1
+fcc_ks.dat  
+INCAR  
+KPOINTS  
+POSCAR  
+POSCAR_init  
+POSCAR_init_0  
+POSCAR_p_32  
+POTCAR  
+vasp_run_new_asura.sh*
+#+end_example
+
+* todo
+** <2021-03-25 木>
+   - make vasp templates
+   - 手順を思い出さな．
+   - einsteinだと必要なファイルをvasp_templatesに作り，そこからcopyしている
+   - でも，vasp_dirを用意しておいてそこに必要なファイルを入れるのが良さそう．
+   - INCAR, KPOINTS, POTCAR
+   - そしてPOSCARをどこから作るか？
+   - shellをどうするか．
+   - それらはとても流動的

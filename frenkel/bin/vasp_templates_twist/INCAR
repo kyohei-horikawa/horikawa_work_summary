@@ -1,0 +1,12 @@
+PREC = Accurate
+ISMEAR = -5
+SIGMA = 0.01
+ISTART = 1
+
+LREAL = Auto
+
+LPLANE = .TRUE.
+NCORE  = 16
+LSCALU = .FALSE.
+NSIM   = 4
+LSCALAPACK = .FALSE

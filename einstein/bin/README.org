@@ -1,0 +1,27 @@
+#+OPTIONS: ^:{}
+#+STARTUP: indent nolineimages
+#+TITLE: Einstein法メモ
+#+AUTHOR: Shigeto R. Nishitani
+#+EMAIL:     (concat "shigeto_nishitani@mac.com")
+#+LANGUAGE:  jp
+# +OPTIONS:   H:4 toc:t num:2
+#+OPTIONS:   toc:nil
+#+TAG: VASP, Frenkel
+#+TWITTER: off
+
+![macOS-11.2.3](https://img.shields.io/badge/macOS-11.2.3-brightgreen) ![ruby-2.7.2p137](https://img.shields.io/badge/ruby-2.7.2p137-brightgreen) 
+
+* procedure
+#+begin_example
+mkdir p_2
+cd p_2/
+cp ../modeling/POSCAR_p_32 .
+cp POSCAR_p_32 POSCAR_full_relaxed
+cp -r ../bin/vasp_templates .
+mv vasp_templates/vasp_run_new_asura.sh .
+cat vasp_templates/INCAR_fix vasp_templates/INCAR_brmix_fail >INCAR_fix
+emacs INCAR_fix 
+mv INCAR_fix vasp_templates/INCAR_fix 
+#+end_example
+
+
